@@ -1,31 +1,61 @@
 import React, { Component } from 'react';
 import {
-  Text, View, StyleSheet, TouchableOpacity, Button,
+  Text, View, StyleSheet, TouchableOpacity,
 } from 'react-native';
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#5C6BC0',
+    alignItems: 'center',
+  },
   grid: {
     alignItems: 'center',
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#14bdac',
   },
   row: {
     flexDirection: 'row',
   },
   cell: {
-    backgroundColor: '#14bdac',
+    backgroundColor: '#5C6BC0',
     width: 100,
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 5,
-    borderColor: '#0da192',
+    borderColor: '#3F51B5',
   },
-  text: {
-    color: '#f2ebd3',
+  textBoard: {
+    color: '#fafafa',
     fontWeight: 'bold',
     fontSize: 50,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 40,
+    paddingTop: 60,
+    paddingBottom: 30,
+    color: '#fafafa',
+  },
+  display: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    paddingBottom: 45,
+    color: '#fafafa',
+  },
+  resetButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3F51B5',
+    padding: 10,
+    width: '100%',
+    height: 70,
+  },
+  resetText: {
+    fontSize: 25,
+    color: '#fafafa',
+    fontWeight: 'bold',
   },
 });
 
@@ -38,24 +68,31 @@ export default class TicTacToe extends Component {
         ' ', ' ', ' ',
         ' ', ' ', ' ',
       ],
-      player: true, // if true play X if false player O
+      player: true,
       winX: 'GAME OVER X WINNER!',
       winO: 'GAME OVER O WINNER!',
       count: 0,
+      winner: false,
     };
     this.onPressReset = this.onPressReset.bind(this);
   }
 
   onPress(i) {
-    const { board, player, count } = this.state;
+    const {
+      board, player, count, winner,
+    } = this.state;
     const squares = board.slice();
 
-    squares[i] = player ? 'X' : 'O';
-    this.setState({
-      board: squares,
-      player: !player,
-      count: count + 1,
-    });
+    if (count === 9) this.setState({ winner: true });
+
+    if (squares[i] === ' ' && winner === false) {
+      squares[i] = player ? 'X' : 'O';
+      this.setState({
+        board: squares,
+        player: !player,
+        count: count + 1,
+      });
+    }
   }
 
   onPressReset() {
@@ -67,6 +104,7 @@ export default class TicTacToe extends Component {
       ],
       player: true,
       count: 0,
+      winner: false,
     });
   }
 
@@ -104,7 +142,7 @@ export default class TicTacToe extends Component {
     return (
       <TouchableOpacity onPress={() => this.onPress(i)}>
         <View style={styles.cell}>
-          <Text style={styles.text}>
+          <Text style={styles.textBoard}>
             {board[i]}
           </Text>
         </View>
@@ -116,8 +154,18 @@ export default class TicTacToe extends Component {
   render() {
     const { player, count } = this.state;
 
+    let result;
+    if (this.findWinner() === null && count !== 9) {
+      result = player ? 'X Turn' : 'O Turn';
+    } else {
+      result = count === 9 ? 'It\'s a draw!' : this.findWinner();
+    }
+
     return (
-      <View style={{ flex: 1, flexDirection: 'column' }}>
+      <View style={styles.mainContainer}>
+        <Text style={styles.title}>
+          Tic Tac Toe
+        </Text>
         <View style={styles.grid}>
           <View style={styles.row}>
             {this.renderSquare(0)}
@@ -135,16 +183,17 @@ export default class TicTacToe extends Component {
             {this.renderSquare(8)}
           </View>
         </View>
-        <Text>
-          {player ? 'X Turn' : 'O Turn'}
+        <Text style={styles.display}>
+          {result}
         </Text>
-        <Text>
-          {count === 9 ? 'It\'s a draw!' : this.findWinner()}
-        </Text>
-        <Button
+        <TouchableOpacity
           onPress={this.onPressReset}
-          title="Reset"
-        />
+          style={styles.resetButton}
+        >
+          <Text style={styles.resetText}>
+              RESTART GAME
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
