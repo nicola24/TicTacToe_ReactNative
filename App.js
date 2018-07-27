@@ -72,20 +72,17 @@ export default class TicTacToe extends Component {
       winX: 'GAME OVER X WINNER!',
       winO: 'GAME OVER O WINNER!',
       count: 0,
-      winner: false,
     };
     this.onPressReset = this.onPressReset.bind(this);
   }
 
   onPress(i) {
     const {
-      board, player, count, winner,
+      board, player, count,
     } = this.state;
     const squares = board.slice();
 
-    if (count === 9) this.setState({ winner: true });
-
-    if (squares[i] === ' ' && winner === false) {
+    if (squares[i] === ' ') {
       squares[i] = player ? 'X' : 'O';
       this.setState({
         board: squares,
@@ -104,12 +101,14 @@ export default class TicTacToe extends Component {
       ],
       player: true,
       count: 0,
-      winner: false,
     });
   }
 
   findWinner() {
-    const { board, winX, winO } = this.state;
+    const {
+      board, winX, winO, count,
+    } = this.state;
+
     let result = null;
 
     // row X
@@ -134,6 +133,9 @@ export default class TicTacToe extends Component {
     // diagonal O
     if (board[0] === 'O' && board[4] === 'O' && board[8] === 'O') result = winO;
     if (board[2] === 'O' && board[4] === 'O' && board[6] === 'O') result = winO;
+
+    else if (result === null && count === 9) result = 'It\'s a draw!';
+
     return result;
   }
 
@@ -158,7 +160,7 @@ export default class TicTacToe extends Component {
     if (this.findWinner() === null && count !== 9) {
       result = player ? 'X Turn' : 'O Turn';
     } else {
-      result = count === 9 ? 'It\'s a draw!' : this.findWinner();
+      result = this.findWinner();
     }
 
     return (
