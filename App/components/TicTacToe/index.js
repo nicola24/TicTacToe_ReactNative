@@ -1,65 +1,9 @@
 import React, { Component } from 'react';
-import {
-  Text, View, StyleSheet, TouchableOpacity,
-} from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#5C6BC0',
-    alignItems: 'center',
-  },
-  grid: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  cell: {
-    backgroundColor: '#5C6BC0',
-    width: 100,
-    height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 5,
-    borderColor: '#3F51B5',
-  },
-  textBoard: {
-    color: '#fafafa',
-    fontWeight: 'bold',
-    fontSize: 50,
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 40,
-    paddingTop: 60,
-    paddingBottom: 30,
-    color: '#fafafa',
-  },
-  display: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    paddingBottom: 45,
-    color: '#fafafa',
-  },
-  resetButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3F51B5',
-    padding: 10,
-    width: '100%',
-    height: 70,
-  },
-  resetText: {
-    fontSize: 25,
-    color: '#fafafa',
-    fontWeight: 'bold',
-  },
-});
+import styles from './styles';
 
-export default class TicTacToe extends Component {
+class TicTacToe extends Component {
   constructor() {
     super();
     this.state = {
@@ -77,12 +21,11 @@ export default class TicTacToe extends Component {
   }
 
   onPress(i) {
-    const {
-      board, player, count,
-    } = this.state;
+    const { board, player, count } = this.state;
+
     const squares = board.slice();
 
-    if (squares[i] === ' ') {
+    if (squares[i] === ' ' && this.findWinner() !== 'GAME OVER X WINNER!' && this.findWinner !== 'GAME OVER O WINNER!') {
       squares[i] = player ? 'X' : 'O';
       this.setState({
         board: squares,
@@ -134,7 +77,7 @@ export default class TicTacToe extends Component {
     if (board[0] === 'O' && board[4] === 'O' && board[8] === 'O') result = winO;
     if (board[2] === 'O' && board[4] === 'O' && board[6] === 'O') result = winO;
 
-    else if (result === null && count === 9) result = 'It\'s a draw!';
+    else if (result === null && count === 9) result = 'IT\'S A DRAW!';
 
     return result;
   }
@@ -144,14 +87,19 @@ export default class TicTacToe extends Component {
     return (
       <TouchableOpacity onPress={() => this.onPress(i)}>
         <View style={styles.cell}>
-          <Text style={styles.textBoard}>
-            {board[i]}
-          </Text>
+          {board[i] === 'X' ? (
+            <Text style={styles.x}>
+              {board[i]}
+            </Text>
+          ) : (
+            <Text style={styles.o}>
+              {board[i]}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     );
   }
-
 
   render() {
     const { player, count } = this.state;
@@ -200,3 +148,5 @@ export default class TicTacToe extends Component {
     );
   }
 }
+
+export default TicTacToe;
